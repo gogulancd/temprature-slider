@@ -1,0 +1,141 @@
+<div class="temp-slider-wrap">
+    <div class="temp-bubble" id="temp">3500K</div>
+    <input 
+        type="range" 
+        id="tempSlider" 
+        min="2700" 
+        max="6500" 
+        value="3500"
+    >
+</div>
+
+<div id="color-overlay"></div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500&display=swap');
+
+.temp-slider-wrap {
+    width: 35%;
+    margin: 0 auto;
+    position: relative;
+}
+
+.temp-bubble {
+    background: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-family: 'Wix Madefor Display', sans-serif;
+    font-weight: 500;
+    position: absolute;
+    top: -40px;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    left: var(--bubble-position, 50%);
+}
+
+.temp-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 12px;
+    background: white;
+}
+
+#tempSlider {
+    width: 100%;
+    height: 12px;
+    -webkit-appearance: none;
+    background: linear-gradient(to right, #FF8A33, #FFFFFF);
+    border-radius: 6px;
+    outline: none;
+}
+
+#tempSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#color-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: multiply;
+}
+
+@media (max-width: 768px) {
+    .temp-slider-wrap {
+        width: 120px;
+    }
+    
+    .temp-bubble {
+        font-size: 12px;
+        padding: 4px 12px;
+    }
+    
+    #tempSlider {
+        height: 4px;
+    }
+    
+    #tempSlider::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+    }
+}
+</style>
+
+<script>
+document.getElementById('tempSlider').oninput = function() {
+    const value = parseInt(this.value);
+    document.getElementById('temp').textContent = value + 'K';
+    
+    const percent = ((value - 2700) / (6500 - 2700)) * 100;
+    document.documentElement.style.setProperty('--bubble-position', percent + '%');
+    
+    const container = document.getElementById('light');
+    let r, g, b, opacity;
+    
+    if (value <= 3000) {
+        r = 255;
+        g = 120;
+        b = 0;
+        opacity = 0.5;
+    } else if (value <= 4500) {
+        r = 255;
+        g = 180;
+        b = 80;
+        opacity = 0.4;
+    } else if (value <= 5000) {
+        r = 255;
+        g = 255;
+        b = 255;
+        opacity = 0.4;
+    } else {
+        r = 255;
+        g = 255;
+        b = 255;
+        opacity = 0.5;
+    }
+    
+    document.getElementById('color-overlay').style.backgroundColor = 
+        `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+window.addEventListener('load', function() {
+    document.getElementById('tempSlider').dispatchEvent(new Event('input'));
+});
+</script>
