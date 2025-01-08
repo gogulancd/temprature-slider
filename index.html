@@ -4,36 +4,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Slider Demo</title>
 </head>
-<body style="margin: 0; padding: 0;">
-    <div id="image-container" style="width: 100%; overflow-x: hidden; position: relative;">
-        <div style="display: flex; justify-content: center; width: 100%;">
-            <div class="temp-slider-wrap">
-                <div class="slider-track">
-                    <div class="slider-line"></div>
+<body style="margin: 0; padding: 0; background: black;">
+    <div class="main-container">
+        <div id="image-container">
+            <div class="slider-container">
+                <div class="temp-slider-wrap">
+                    <div class="slider-track">
+                        <div class="slider-line"></div>
+                    </div>
+                    <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
+                    <div class="temp-value" id="temp">4348K</div>
                 </div>
-                <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
-                <div class="temp-value" id="temp">4348K</div>
             </div>
+            <div id="color-overlay"></div>
         </div>
-        <div id="color-overlay"></div>
     </div>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500&display=swap');
 
+.main-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
 #image-container {
-    background-image: url('https://teal-pigeon-279610.hostingersite.com/wp-content/uploads/2025/01/image.jpg');
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    position: relative;
+    background: url('https://teal-pigeon-279610.hostingersite.com/wp-content/uploads/2025/01/image.jpg') center no-repeat;
     background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-color: black;
-    height: 100vh;
+}
+
+.slider-container {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
 }
 
 .temp-slider-wrap {
-    width: 95%;
+    width: 60%;
+    margin: 0 auto;
     position: relative;
-    padding: 0 16px;
 }
 
 .slider-track {
@@ -94,12 +110,18 @@
     top: 0;
     left: 50%;
     width: 50%;
-    height: 100vh;
+    height: 100%;
     pointer-events: none;
     z-index: 1;
     mix-blend-mode: multiply;
     -webkit-mask-image: linear-gradient(to right, transparent, black 20%);
     mask-image: linear-gradient(to right, transparent, black 20%);
+}
+
+@media (max-width: 1024px) {
+    .temp-slider-wrap {
+        width: 70%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -108,10 +130,31 @@
     }
     
     .temp-value {
+        font-size: 14px;
+    }
+    
+    .slider-track,
+    #tempSlider {
+        height: 8px;
+    }
+    
+    #tempSlider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    #color-overlay {
+        left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .temp-value {
         font-size: 12px;
     }
     
-    .slider-line,
+    .slider-track,
     #tempSlider {
         height: 4px;
     }
@@ -119,11 +162,6 @@
     #tempSlider::-webkit-slider-thumb {
         width: 16px;
         height: 16px;
-    }
-
-    #color-overlay {
-        left: 0;
-        width: 100%;
     }
 }
 </style>
