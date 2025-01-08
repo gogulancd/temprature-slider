@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Slider</title>
 </head>
-<body style="margin: 0; padding: 0;">
+<body style="margin: 0; padding: 0; background: transparent;">
     <div class="slider-container">
         <div class="temp-slider-wrap">
             <div class="slider-track">
@@ -22,11 +22,11 @@
 .slider-container {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100%;
 }
 
 .temp-slider-wrap {
-    width: 60%;
+    width: 50%;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -36,7 +36,7 @@
 .slider-track {
     position: relative;
     width: 100%;
-    height: 12px;
+    height: 4px;
 }
 
 .slider-line {
@@ -55,13 +55,13 @@
 
 .temp-value {
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-family: 'Wix Madefor Display', sans-serif;
     font-weight: 500;
     position: absolute;
     transform: translateX(-50%);
     top: 100%;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 #tempSlider {
@@ -69,7 +69,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 12px;
+    height: 4px;
     -webkit-appearance: none;
     background: transparent;
     outline: none;
@@ -77,8 +77,8 @@
 
 #tempSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
     background: white;
     border-radius: 50%;
     cursor: pointer;
@@ -94,7 +94,7 @@
     pointer-events: none;
     z-index: 1;
     mix-blend-mode: soft-light;
-    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.2));
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.15));
 }
 </style>
 
@@ -111,13 +111,13 @@ function updateValues() {
     let overlayColor;
     
     if (value <= 3000) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,140,0,0.3) 20%, rgba(255,140,0,0.4))';
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,140,0,0.2) 20%, rgba(255,140,0,0.25))';
     } else if (value <= 4500) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,180,0,0.2) 20%, rgba(255,180,0,0.3))';
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,180,0,0.15) 20%, rgba(255,180,0,0.2))';
     } else if (value <= 5000) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2))';
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.15))';
     } else {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(200,225,255,0.2) 20%, rgba(200,225,255,0.3))';
+        overlayColor = 'linear-gradient(to right, transparent, rgba(200,225,255,0.15) 20%, rgba(200,225,255,0.2))';
     }
     
     document.getElementById('color-overlay').style.background = overlayColor;
