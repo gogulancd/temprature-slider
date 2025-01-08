@@ -2,18 +2,16 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Slider Demo</title>
+    <title>Temperature Slider</title>
 </head>
-<body style="margin: 0; padding: 0; background: black;">
-    <div id="image-container">
-        <div class="slider-container">
-            <div class="temp-slider-wrap">
-                <div class="slider-track">
-                    <div class="slider-line"></div>
-                </div>
-                <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
-                <div class="temp-value" id="temp">4348K</div>
+<body style="margin: 0; padding: 0;">
+    <div class="slider-container">
+        <div class="temp-slider-wrap">
+            <div class="slider-track">
+                <div class="slider-line"></div>
             </div>
+            <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
+            <div class="temp-value" id="temp">4348K</div>
         </div>
         <div id="color-overlay"></div>
     </div>
@@ -21,26 +19,18 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500&display=swap');
 
-#image-container {
+.slider-container {
+    position: relative;
     width: 100%;
     height: 100vh;
-    background: url('https://teal-pigeon-279610.hostingersite.com/wp-content/uploads/2025/01/image.jpg') center no-repeat;
-    background-size: contain;
-    position: relative;
-}
-
-.slider-container {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-50%);
 }
 
 .temp-slider-wrap {
     width: 60%;
-    margin: 0 auto;
-    position: relative;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .slider-track {
@@ -93,20 +83,18 @@
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    position: relative;
 }
 
 #color-overlay {
     position: absolute;
     top: 0;
-    left: 50%;
+    right: 0;
     width: 50%;
     height: 100%;
     pointer-events: none;
     z-index: 1;
-    mix-blend-mode: multiply;
-    -webkit-mask-image: linear-gradient(to right, transparent, black 20%);
-    mask-image: linear-gradient(to right, transparent, black 20%);
+    mix-blend-mode: soft-light;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.2));
 }
 </style>
 
@@ -120,32 +108,19 @@ function updateValues() {
     const percent = ((value - 2700) / (6500 - 2700)) * 100;
     temp.style.left = `${percent}%`;
     
-    let r, g, b, opacity;
+    let overlayColor;
     
     if (value <= 3000) {
-        r = 255;
-        g = 120;
-        b = 0;
-        opacity = 0.5;
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,140,0,0.3) 20%, rgba(255,140,0,0.4))';
     } else if (value <= 4500) {
-        r = 255;
-        g = 180;
-        b = 80;
-        opacity = 0.4;
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,180,0,0.2) 20%, rgba(255,180,0,0.3))';
     } else if (value <= 5000) {
-        r = 255;
-        g = 255;
-        b = 255;
-        opacity = 0.4;
+        overlayColor = 'linear-gradient(to right, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.2))';
     } else {
-        r = 255;
-        g = 255;
-        b = 255;
-        opacity = 0.5;
+        overlayColor = 'linear-gradient(to right, transparent, rgba(200,225,255,0.2) 20%, rgba(200,225,255,0.3))';
     }
     
-    document.getElementById('color-overlay').style.backgroundColor = 
-        `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    document.getElementById('color-overlay').style.background = overlayColor;
 }
 
 slider.addEventListener('input', updateValues);
