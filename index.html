@@ -1,56 +1,80 @@
-<div class="temp-slider-wrap">
-    <div class="temp-bubble" id="temp">3500K</div>
-    <input 
-        type="range" 
-        id="tempSlider" 
-        min="2700" 
-        max="6500" 
-        value="3500"
-    >
-</div>
-
-<div id="color-overlay"></div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Slider Demo</title>
+</head>
+<body style="margin: 0; padding: 0;">
+    <div id="image-container" style="width: 100%; overflow-x: hidden; position: relative;">
+        <div style="display: flex; justify-content: center; width: 100%;">
+            <div class="temp-slider-wrap">
+                <div class="slider-track">
+                    <div class="slider-line"></div>
+                </div>
+                <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
+                <div class="temp-value" id="temp">4348K</div>
+            </div>
+        </div>
+        <div id="color-overlay"></div>
+    </div>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500&display=swap');
 
-.temp-slider-wrap {
-    width: 35%;
-    margin: 0 auto;
-    position: relative;
+#image-container {
+    background-image: url('https://teal-pigeon-279610.hostingersite.com/wp-content/uploads/2025/01/image.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: black;
+    height: 100vh;
 }
 
-.temp-bubble {
-    background: white;
-    padding: 6px 16px;
-    border-radius: 20px;
+.temp-slider-wrap {
+    width: 95%;
+    position: relative;
+    padding: 0 16px;
+}
+
+.slider-track {
+    position: relative;
+    width: 100%;
+    height: 12px;
+}
+
+.slider-line {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, 
+        #FFA726 0%, 
+        #FFD180 30%, 
+        #FFECB3 50%,
+        #E3F2FD 70%,
+        #BBDEFB 100%
+    );
+    border-radius: 6px;
+}
+
+.temp-value {
+    color: white;
     font-size: 16px;
     font-family: 'Wix Madefor Display', sans-serif;
     font-weight: 500;
     position: absolute;
-    top: -40px;
     transform: translateX(-50%);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    left: var(--bubble-position, 50%);
-}
-
-.temp-bubble:after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 12px;
-    background: white;
+    top: 100%;
+    margin-top: 10px;
 }
 
 #tempSlider {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 12px;
     -webkit-appearance: none;
-    background: linear-gradient(to right, #FF8A33, #FFFFFF);
-    border-radius: 6px;
+    background: transparent;
     outline: none;
 }
 
@@ -62,31 +86,36 @@
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: relative;
 }
 
 #color-overlay {
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
+    left: 50%;
+    width: 50%;
     height: 100vh;
     pointer-events: none;
     z-index: 1;
     mix-blend-mode: multiply;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 20%);
+    mask-image: linear-gradient(to right, transparent, black 20%);
 }
 
 @media (max-width: 768px) {
+    #image-container {
+        background-image: url('https://teal-pigeon-279610.hostingersite.com/wp-content/uploads/2025/01/booth.jpg');
+    }
+
     .temp-slider-wrap {
-        width: 120px;
+        width: 80%;
     }
     
-    .temp-bubble {
+    .temp-value {
         font-size: 12px;
-        padding: 4px 12px;
     }
     
+    .slider-line,
     #tempSlider {
         height: 4px;
     }
@@ -95,18 +124,24 @@
         width: 16px;
         height: 16px;
     }
+
+    #color-overlay {
+        left: 0;
+        width: 100%;
+    }
 }
 </style>
 
 <script>
-document.getElementById('tempSlider').oninput = function() {
+const slider = document.getElementById('tempSlider');
+
+function updateValues() {
     const value = parseInt(this.value);
-    document.getElementById('temp').textContent = value + 'K';
-    
+    const temp = document.getElementById('temp');
+    temp.textContent = value + 'K';
     const percent = ((value - 2700) / (6500 - 2700)) * 100;
-    document.documentElement.style.setProperty('--bubble-position', percent + '%');
+    temp.style.left = `${percent}%`;
     
-    const container = document.getElementById('light');
     let r, g, b, opacity;
     
     if (value <= 3000) {
@@ -135,7 +170,11 @@ document.getElementById('tempSlider').oninput = function() {
         `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
+slider.addEventListener('input', updateValues);
+
 window.addEventListener('load', function() {
-    document.getElementById('tempSlider').dispatchEvent(new Event('input'));
+    slider.dispatchEvent(new Event('input'));
 });
 </script>
+</body>
+</html>
