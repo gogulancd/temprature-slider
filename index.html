@@ -1,110 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .overlay-container {
-            position: absolute;
+        .overlay {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            transition: all 0.8s ease;
+            mix-blend-mode: multiply;
         }
-
-        .color-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transition: background-color 0.3s ease;
-            pointer-events: none;
-        }
-
-        .slider-wrapper {
-            position: absolute;
+        .slider {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .mood-text {
-            color: white;
-            margin-bottom: 15px;
-            font-family: sans-serif;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-
-        .temperature-slider {
-            width: 100%;
+            width: 300px;
             -webkit-appearance: none;
             height: 2px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.7);
             outline: none;
         }
-
-        .temperature-slider::-webkit-slider-thumb {
+        .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
+            appearance: none;
             width: 18px;
             height: 18px;
-            background: #ffffff;
             border-radius: 50%;
+            background: white;
             cursor: pointer;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
-    <div class="overlay-container">
-        <div class="color-overlay" id="overlay"></div>
-        <div class="slider-wrapper">
-            <div class="mood-text">Slide to change the mood</div>
-            <input type="range" min="2500" max="6500" value="3500" class="temperature-slider" id="tempSlider">
-        </div>
-    </div>
+    <div class="overlay" id="overlay"></div>
+    <input 
+        type="range" 
+        min="2200" 
+        max="5000" 
+        value="2200" 
+        class="slider" 
+        id="tempSlider"
+    >
 
     <script>
         const slider = document.getElementById('tempSlider');
         const overlay = document.getElementById('overlay');
 
-        function kelvinToRGB(kelvin) {
-            let temp = kelvin / 100;
-            let red, green, blue;
-
+        function kelvinToColor(kelvin) {
+            const temp = kelvin / 100;
+            let r, g, b;
+            
             if (temp <= 66) {
-                red = 255;
-                green = temp;
-                green = 99.4708025861 * Math.log(green) - 161.1195681661;
-                blue = temp <= 19 ? 0 : temp - 10;
-                blue = 138.5177312231 * Math.log(blue) - 305.0447927307;
+                r = 255;
+                g = temp;
+                g = 99.4708025861 * Math.log(g) - 161.1195681661;
+                b = temp <= 19 ? 0 : temp - 10;
+                b = 138.5177312231 * Math.log(b) - 305.0447927307;
             } else {
-                red = temp - 60;
-                red = 329.698727446 * Math.pow(red, -0.1332047592);
-                green = temp - 60;
-                green = 288.1221695283 * Math.pow(green, -0.0755148492);
-                blue = 255;
+                r = temp - 60;
+                r = 329.698727446 * Math.pow(r, -0.1332047592);
+                g = temp - 60;
+                g = 288.1221695283 * Math.pow(g, -0.0755148492);
+                b = 255;
             }
-
+            
             return {
-                r: Math.min(255, Math.max(0, red)),
-                g: Math.min(255, Math.max(0, green)),
-                b: Math.min(255, Math.max(0, blue))
+                r: Math.min(255, Math.max(0, r)),
+                g: Math.min(255, Math.max(0, g)),
+                b: Math.min(255, Math.max(0, b))
             };
         }
 
-        function updateColorTemperature() {
-            const temperature = parseInt(slider.value);
-            const rgb = kelvinToRGB(temperature);
-            overlay.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)`;
+        slider.oninput = function() {
+            const color = kelvinToColor(this.value);
+            const opacity = 0.15; // Reduced opacity for subtler effect
+            overlay.style.backgroundColor = 
+                `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity})`;
         }
 
-        slider.addEventListener('input', updateColorTemperature);
-        updateColorTemperature();
+        // Initialize with warm tone
+        slider.oninput();
     </script>
 </body>
 </html>
