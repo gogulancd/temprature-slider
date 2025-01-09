@@ -3,100 +3,43 @@
 <head>
     <title>Temperature Slider</title>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrollbars */
+        }
         .container {
             position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: #000;  /* Dark background to see content better */
+            width: 100vw;  /* Full viewport width */
+            height: 100vh; /* Full viewport height */
         }
-
-        .image-stack {
-            position: relative;
-            width: 100%;
-            height: 500px;  /* Fixed height to maintain space */
-            background: #333;  /* Visible while images load */
-        }
-
-        .image-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;  /* Makes images cover area properly */
-            transition: opacity 0.3s ease;
-        }
-
         .slider-container {
-            padding: 20px;
-            background: rgba(0,0,0,0.8);
+            position: absolute;
+            width: 80%;
+            left: 10%;
+            top: 50%;
         }
-
         input[type="range"] {
             width: 100%;
-            margin: 10px 0;
-        }
-
-        #tempValue {
-            color: white;
-            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="image-stack">
-            <!-- Use full URLs to your images -->
-            <img class="image-layer" id="cool" src="https://FULL-URL-TO-YOUR-IMAGE/cool.jpg" style="opacity: 0;" alt="Cool">
-            <img class="image-layer" id="normal" src="https://FULL-URL-TO-YOUR-IMAGE/normal.jpg" style="opacity: 1;" alt="Normal">
-            <img class="image-layer" id="warm" src="https://FULL-URL-TO-YOUR-IMAGE/warm.jpg" style="opacity: 0;" alt="Warm">
-        </div>
+        <!-- Test content to verify it's working -->
         <div class="slider-container">
-            <input type="range" min="2200" max="6700" value="4500" step="100" id="tempSlider">
-            <div id="tempValue">4500K</div>
+            <input type="range" min="2200" max="6700" value="4500">
+            <div>Temperature: <span id="value">4500</span>K</div>
         </div>
     </div>
 
     <script>
-        // Wait for all images to load
-        window.addEventListener('load', function() {
-            const slider = document.getElementById('tempSlider');
-            const tempDisplay = document.getElementById('tempValue');
-            const warmImg = document.getElementById('warm');
-            const normalImg = document.getElementById('normal');
-            const coolImg = document.getElementById('cool');
-
-            // Check if all elements are found
-            if(!slider || !tempDisplay || !warmImg || !normalImg || !coolImg) {
-                console.error('Some elements not found');
-                return;
-            }
-
-            slider.addEventListener('input', function() {
-                const value = parseInt(this.value);
-                tempDisplay.textContent = value + 'K';
-
-                try {
-                    if(value < 3500) {
-                        const ratio = (value - 2200) / 1300;
-                        warmImg.style.opacity = 1 - ratio;
-                        normalImg.style.opacity = ratio;
-                        coolImg.style.opacity = 0;
-                    } else if(value > 5400) {
-                        const ratio = (value - 5400) / 1300;
-                        warmImg.style.opacity = 0;
-                        normalImg.style.opacity = 1 - ratio;
-                        coolImg.style.opacity = ratio;
-                    } else {
-                        warmImg.style.opacity = 0;
-                        normalImg.style.opacity = 1;
-                        coolImg.style.opacity = 0;
-                    }
-                } catch(error) {
-                    console.error('Error updating images:', error);
-                }
-            });
+        // Basic test script
+        const slider = document.querySelector('input[type="range"]');
+        const value = document.getElementById('value');
+        
+        slider.addEventListener('input', function() {
+            value.textContent = this.value;
         });
     </script>
 </body>
