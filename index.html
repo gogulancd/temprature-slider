@@ -1,123 +1,103 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Slider</title>
+    <style>
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #000;  /* Dark background to see content better */
+        }
+
+        .image-stack {
+            position: relative;
+            width: 100%;
+            height: 500px;  /* Fixed height to maintain space */
+            background: #333;  /* Visible while images load */
+        }
+
+        .image-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* Makes images cover area properly */
+            transition: opacity 0.3s ease;
+        }
+
+        .slider-container {
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #tempValue {
+            color: white;
+            text-align: center;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background: transparent;">
-    <div class="temp-slider-wrap">
-        <div class="slider-track">
-            <div class="slider-line"></div>
+<body>
+    <div class="container">
+        <div class="image-stack">
+            <!-- Use full URLs to your images -->
+            <img class="image-layer" id="cool" src="https://FULL-URL-TO-YOUR-IMAGE/cool.jpg" style="opacity: 0;" alt="Cool">
+            <img class="image-layer" id="normal" src="https://FULL-URL-TO-YOUR-IMAGE/normal.jpg" style="opacity: 1;" alt="Normal">
+            <img class="image-layer" id="warm" src="https://FULL-URL-TO-YOUR-IMAGE/warm.jpg" style="opacity: 0;" alt="Warm">
         </div>
-        <input type="range" id="tempSlider" min="2700" max="6500" value="4348">
-        <div class="temp-value" id="temp">4348K</div>
+        <div class="slider-container">
+            <input type="range" min="2200" max="6700" value="4500" step="100" id="tempSlider">
+            <div id="tempValue">4500K</div>
+        </div>
     </div>
-    <div id="color-overlay"></div>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500&display=swap');
+    <script>
+        // Wait for all images to load
+        window.addEventListener('load', function() {
+            const slider = document.getElementById('tempSlider');
+            const tempDisplay = document.getElementById('tempValue');
+            const warmImg = document.getElementById('warm');
+            const normalImg = document.getElementById('normal');
+            const coolImg = document.getElementById('cool');
 
-.temp-slider-wrap {
-    width: 50%;
-    margin: 0 auto;
-    position: relative;
-}
+            // Check if all elements are found
+            if(!slider || !tempDisplay || !warmImg || !normalImg || !coolImg) {
+                console.error('Some elements not found');
+                return;
+            }
 
-.slider-track {
-    position: relative;
-    width: 100%;
-    height: 4px;
-}
+            slider.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                tempDisplay.textContent = value + 'K';
 
-.slider-line {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, 
-        #FFA726 0%, 
-        #FFD180 30%, 
-        #FFECB3 50%,
-        #E3F2FD 70%,
-        #BBDEFB 100%
-    );
-    border-radius: 6px;
-}
-
-.temp-value {
-    color: white;
-    font-size: 14px;
-    font-family: 'Wix Madefor Display', sans-serif;
-    font-weight: 500;
-    position: absolute;
-    transform: translateX(-50%);
-    top: 100%;
-    margin-top: 8px;
-}
-
-#tempSlider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    -webkit-appearance: none;
-    background: transparent;
-    outline: none;
-}
-
-#tempSlider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-#color-overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: soft-light;
-    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1) 20%, rgba(0,0,0,0.15));
-}
-</style>
-
-<script>
-const slider = document.getElementById('tempSlider');
-
-function updateValues() {
-    const value = parseInt(this.value);
-    const temp = document.getElementById('temp');
-    temp.textContent = value + 'K';
-    const percent = ((value - 2700) / (6500 - 2700)) * 100;
-    temp.style.left = `${percent}%`;
-    
-    let overlayColor;
-    
-    if (value <= 3000) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,140,0,0.2) 20%, rgba(255,140,0,0.25))';
-    } else if (value <= 4500) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,180,0,0.15) 20%, rgba(255,180,0,0.2))';
-    } else if (value <= 5000) {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.15))';
-    } else {
-        overlayColor = 'linear-gradient(to right, transparent, rgba(200,225,255,0.15) 20%, rgba(200,225,255,0.2))';
-    }
-    
-    document.getElementById('color-overlay').style.background = overlayColor;
-}
-
-slider.addEventListener('input', updateValues);
-
-window.addEventListener('load', function() {
-    slider.dispatchEvent(new Event('input'));
-});
-</script>
+                try {
+                    if(value < 3500) {
+                        const ratio = (value - 2200) / 1300;
+                        warmImg.style.opacity = 1 - ratio;
+                        normalImg.style.opacity = ratio;
+                        coolImg.style.opacity = 0;
+                    } else if(value > 5400) {
+                        const ratio = (value - 5400) / 1300;
+                        warmImg.style.opacity = 0;
+                        normalImg.style.opacity = 1 - ratio;
+                        coolImg.style.opacity = ratio;
+                    } else {
+                        warmImg.style.opacity = 0;
+                        normalImg.style.opacity = 1;
+                        coolImg.style.opacity = 0;
+                    }
+                } catch(error) {
+                    console.error('Error updating images:', error);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
