@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Slider</title>
+    <title>Simple Temperature Slider</title>
     <style>
         body {
             margin: 0;
@@ -30,7 +30,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
             position: relative;
             touch-action: none;
         }
@@ -39,10 +38,9 @@
             width: 100%;
             height: 12px;
             -webkit-appearance: none;
-            background: linear-gradient(to right, rgb(255, 152, 0), rgb(255, 255, 255));
+            background: linear-gradient(to right, #FF9529, #ffffff);
             border-radius: 6px;
             outline: none;
-            touch-action: manipulation;
         }
 
         #tempSlider::-webkit-slider-thumb {
@@ -59,148 +57,78 @@
             color: white;
             font-size: 16px;
             font-family: system-ui, -apple-system, sans-serif;
-            position: absolute;
-            bottom: -38px;
-            transform: translateX(-50%);
-            transition: left 0.1s ease-out;
+            margin-top: 10px;
         }
 
-        @media (max-width: 768px) {
-            .temp-slider-wrap {
-                width: 80%;
-                min-width: 200px;
-                max-width: 300px;
-            }
-            
-            #tempSlider {
-                height: 8px;
-            }
-            
-            #tempSlider::-webkit-slider-thumb {
-                width: 24px;
-                height: 24px;
-            }
-            
-            .temp-value {
-                font-size: 14px;
-                bottom: -32px;
-            }
+        .blend-layer-1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+        }
+
+        .blend-layer-2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            mix-blend-mode: soft-light;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div id="light">
-        <!-- Slider container -->
+        <div class="blend-layer-1" id="blendLayer1"></div>
+        <div class="blend-layer-2" id="blendLayer2"></div>
         <div class="temp-slider-wrap">
             <div class="slider-container">
                 <input 
                     type="range" 
                     id="tempSlider" 
-                    min="2700" 
-                    max="6500" 
-                    value="3500"
+                    min="0" 
+                    max="100" 
+                    value="0"
                 >
-                <div id="temp" class="temp-value">3500K</div>
+                <div id="temp" class="temp-value">2700K</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Create main overlay element with touch prevention
-        const overlay = document.createElement('div');
-        overlay.id = 'color-overlay';
-        overlay.style.position = 'absolute';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.right = '0';
-        overlay.style.bottom = '0';
-        overlay.style.width = '100%';
-        overlay.style.height = '100%';
-        overlay.style.pointerEvents = 'none';
-        overlay.style.zIndex = '1';
-        overlay.style.mixBlendMode = 'multiply';
+        const slider = document.getElementById('tempSlider');
+        const blendLayer1 = document.getElementById('blendLayer1');
+        const blendLayer2 = document.getElementById('blendLayer2');
+        const tempDisplay = document.getElementById('temp');
 
-        // Add gradient for fade effect
-        const gradient = document.createElement('div');
-        gradient.style.position = 'absolute';
-        gradient.style.top = '0';
-        gradient.style.left = '0';
-        gradient.style.right = '0';
-        gradient.style.bottom = '0';
-        gradient.style.background = 'linear-gradient(to left, rgba(0,0,0,0), rgba(0,0,0,0.3))';
-        gradient.style.pointerEvents = 'none';
-        gradient.style.mixBlendMode = 'multiply';
-        gradient.style.zIndex = '2';
-
-        // Add overlays to light container
-        const lightContainer = document.getElementById('light');
-        lightContainer.style.position = 'relative';
-        lightContainer.style.touchAction = 'none';
-        lightContainer.appendChild(overlay);
-        lightContainer.appendChild(gradient);
-
-        // Prevent default touch behavior on container
-        lightContainer.addEventListener('touchstart', e => {
-            if (!e.target.matches('#tempSlider')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        lightContainer.addEventListener('touchmove', e => {
-            if (!e.target.matches('#tempSlider')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Slider functionality
-        document.getElementById('tempSlider').oninput = function() {
+        slider.oninput = function() {
             const value = parseInt(this.value);
-            const tempElement = document.getElementById('temp');
-            tempElement.textContent = value + 'K';
             
-            // Calculate position for temperature value
-            const percent = (value - 2700) / (6500 - 2700);
-            const sliderWidth = this.offsetWidth;
-            const thumbWidth = 32;
-            const offset = (sliderWidth - thumbWidth) * percent + (thumbWidth / 2);
-            tempElement.style.left = offset + 'px';
-            
-            let r, g, b, opacity;
-            
-            if (value <= 3000) {
-                r = 255;
-                g = 147;
-                b = 41;
-                opacity = 0.5;
-            } else if (value <= 4500) {
-                r = 255;
-                g = 197;
-                b = 143;
-                opacity = 0.4;
-            } else if (value <= 5000) {
-                r = 255;
-                g = 255;
-                b = 255;
-                opacity = 0.3;
-            } else {
-                r = 240;
-                g = 250;
-                b = 255;
-                opacity = 0.4;
-            }
-            
-            overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            // Convert slider value to temperature
+            const temp = 2700 + (value/100) * (6500-2700);
+            tempDisplay.textContent = Math.round(temp) + 'K';
+
+            // Warm color (orange)
+            const warmR = 255, warmG = 149, warmB = 41;
+            // Cool color (white)
+            const coolR = 255, coolG = 255, coolB = 255;
+
+            // Calculate color based on slider position
+            const r = warmR + (value/100) * (coolR - warmR);
+            const g = warmG + (value/100) * (coolG - warmG);
+            const b = warmB + (value/100) * (coolB - warmB);
+
+            // Set blend layers
+            blendLayer1.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.4)`;
+            blendLayer2.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.3)`;
         }
 
-        // Initialize on load
-        window.addEventListener('load', function() {
-            document.getElementById('tempSlider').dispatchEvent(new Event('input'));
-        });
-
-        // Update on resize
-        window.addEventListener('resize', function() {
-            document.getElementById('tempSlider').dispatchEvent(new Event('input'));
-        });
+        // Initialize
+        slider.dispatchEvent(new Event('input'));
     </script>
 </body>
 </html>
